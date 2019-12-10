@@ -1,0 +1,15 @@
+--create ..\OBJ\USART.lib
+..\obj\main.o
+..\obj\stm32f10x_it.o
+..\obj\system_stm32f10x.o
+..\obj\sys.o
+..\obj\startup_stm32f10x_hd.o
+..\obj\misc.o
+..\obj\stm32f10x_gpio.o
+..\obj\stm32f10x_rcc.o
+..\obj\stm32f10x_usart.o
+..\obj\stm32f10x_dma.o
+..\obj\stm32f10x_can.o
+..\obj\systick.o
+..\obj\can.o
+..\obj\usart.o

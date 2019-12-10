@@ -1,36 +1,29 @@
-..\obj\main.o: main.c
-..\obj\main.o: ..\HARDWARE\LED\led.h
-..\obj\main.o: ..\SYSTEM\sys\sys.h
-..\obj\main.o: ..\USER\stm32f10x.h
-..\obj\main.o: ..\CORE\core_cm3.h
-..\obj\main.o: C:\TIM\software\MDK526\ARM\ARMCC\Bin\..\include\stdint.h
-..\obj\main.o: ..\USER\system_stm32f10x.h
-..\obj\main.o: ..\USER\stm32f10x_conf.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_adc.h
-..\obj\main.o: ..\USER\stm32f10x.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_bkp.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_can.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_cec.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_crc.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_dac.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_dbgmcu.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_dma.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_exti.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_flash.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_fsmc.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_gpio.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_i2c.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_iwdg.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_pwr.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_rcc.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_rtc.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_sdio.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_spi.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_tim.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_usart.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
-..\obj\main.o: ..\STM32F10x_FWLib\inc\misc.h
-..\obj\main.o: ..\SYSTEM\delay\delay.h
-..\obj\main.o: ..\HARDWARE\KEY\key.h
-..\obj\main.o: ..\SYSTEM\usart\usart.h
-..\obj\main.o: C:\TIM\software\MDK526\ARM\ARMCC\Bin\..\include\stdio.h
+../obj/main.o: main.c ..\APP\CONFIG\config.h \
+  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h \
+  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h ..\SYSTEM\sys\sys.h \
+  ..\USER\stm32f10x.h ..\CORE\core_cm3.h \
+  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h \
+  ..\USER\system_stm32f10x.h ..\USER\stm32f10x_conf.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_adc.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_bkp.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_can.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_cec.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_crc.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_dac.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_dbgmcu.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_dma.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_exti.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_flash.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_fsmc.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_gpio.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_i2c.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_iwdg.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_pwr.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_rcc.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_rtc.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_sdio.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_spi.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_tim.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_usart.h \
+  ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h ..\STM32F10x_FWLib\inc\misc.h \
+  ..\APP\USART\usart.h ..\APP\CAN\can.h ..\APP\SYSTICK\systick.h

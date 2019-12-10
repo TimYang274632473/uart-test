@@ -1,0 +1,4 @@
+多机can通信测试：
+①sub_board1:500 ms发送一帧stdID=0xf1的数据帧，接收到的数据通过usart3打印。
+②sub_board2:1000ms发送一帧stdID=0xf2的数据帧，接收到的数据通过usart3打印。
+③main_board:接收sub的数据后通过usart3打印，并发送一帧stdID=0xff的数据。
