@@ -104,7 +104,24 @@ void Task_100MS(void)
 }
 void Task_10MS(void)
 {
+#if REMOTE_FRAME_TEST
+		static u16 remote_req_count = 0;
+	if(remote_req_count % 2 == 0)
+	{
+		
+	}
+	else
+	{
+	
+	}
+	remote_req_count++;
 
+	if(Can_Send_Msg(*p_u8_can_rx,CAN_RTX_LEN,REMOTE_FRAME))
+	{
+		//send error
+	}
+		
+#endif
 //	if(can_rx_flag)
 //	{		
 //		DMA_SetCurrDataCounter(DMA1_Channel2,CAN_RTX_LEN);
@@ -116,27 +133,26 @@ void Task_10MS(void)
 //CAN数据接收检测保存
 void Task_1MS(void)
 {
-#if MAIN_BOARD	
-	if(can_rx_flag)
-	{
-		if(RxMessage.StdId == CAN_SUB1_STDID)
+	#if MAIN_BOARD	
+		if(can_rx_flag)
 		{
-			p_u8_can_rx = &CAN_SUB1_RX_BUFF;
-			can_sub1_rx_flag = true;
+			if(RxMessage.StdId == CAN_SUB1_STDID)
+			{
+				p_u8_can_rx = &CAN_SUB1_RX_BUFF;
+				can_sub1_rx_flag = true;
+			}
+			else if(RxMessage.StdId == CAN_SUB2_STDID)
+			{
+				p_u8_can_rx = &CAN_SUB2_RX_BUFF;
+				can_sub2_rx_flag = true;
+			}
+			for(u8 i=0;i<8;i++)
+			{
+				(*p_u8_can_rx)[7-i] = RxMessage.Data[i];
+			}
+			can_rx_flag = false;
 		}
-		else if(RxMessage.StdId == CAN_SUB2_STDID)
-		{
-			p_u8_can_rx = &CAN_SUB2_RX_BUFF;
-			can_sub2_rx_flag = true;
-		}
-		for(u8 i=0;i<8;i++)
-		{
-			(*p_u8_can_rx)[7-i] = RxMessage.Data[i];
-		}
-		can_rx_flag = false;
-	}
-#endif
-			
+	#endif		
 	
 //	printf("1\r\n");
 }
@@ -160,7 +176,7 @@ void Task_5MS(void)
 #if MAIN_BOARD
 if(can_sub1_rx_flag)
 	{
-		if(Can_Send_Msg(*p_u8_can_rx,CAN_RTX_LEN))
+		if(Can_Send_Msg(*p_u8_can_rx,CAN_RTX_LEN,DATA_FRAME))
 		{
 			//send error
 		}
@@ -175,7 +191,7 @@ if(can_sub1_rx_flag)
 	}
 if(can_sub2_rx_flag)
 	{
-		if(Can_Send_Msg(*p_u8_can_rx,CAN_RTX_LEN))
+		if(Can_Send_Msg(*p_u8_can_rx,CAN_RTX_LEN,DATA_FRAME))
 		{
 			//send error
 		}

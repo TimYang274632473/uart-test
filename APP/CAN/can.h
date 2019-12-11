@@ -3,6 +3,12 @@
     
 #include "config.h"
 
+typedef enum 
+{
+	REMOTE_FRAME=0,
+	DATA_FRAME
+}FRAME_TYPE;
+
 #define CAN_FILTER_LIST_MODE		 0										//是否使用列表模式
 
 //CAN接收RX0中断使能
@@ -55,6 +61,6 @@ extern vb can_sub2_tx_flag;
 
 
 u8 CAN_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode);
-u8 Can_Send_Msg(u8* msg,u8 len);						
+u8 Can_Send_Msg(u8* msg,u8 len,FRAME_TYPE frame_type);						
 u8 Can_Receive_Msg(u8 *buf);							
 #endif

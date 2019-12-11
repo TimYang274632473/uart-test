@@ -160,7 +160,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 
 //return:	0 success 
 //				1 fail
-u8 Can_Send_Msg(u8* msg,u8 len)
+u8 Can_Send_Msg(u8* msg,u8 len,FRAME_TYPE frame_type)
 {	
 	u8 mbox;
 	u16 i=0;
