@@ -73,7 +73,7 @@ void Task_1000MS(void)
 }
 void Task_100MS(void)
 {	
-	#if SUB_BOARD1
+#if SUB_BOARD1
 	u32 temp = 0;
 	
 	temp = can_tx_count++;
@@ -85,7 +85,7 @@ void Task_100MS(void)
 	{
 		printf("can send fail \r\n");
 	}
-	#endif
+#endif
 #if SUB_BOARD2 
 	
 	u32 temp = 0;
@@ -119,7 +119,6 @@ void Task_1MS(void)
 #if MAIN_BOARD	
 	if(can_rx_flag)
 	{
-		
 		if(RxMessage.StdId == CAN_SUB1_STDID)
 		{
 			p_u8_can_rx = &CAN_SUB1_RX_BUFF;

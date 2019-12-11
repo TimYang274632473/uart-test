@@ -1,9 +1,11 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
-#define MAIN_BOARD   0
+#define MAIN_BOARD   1
 #define SUB_BOARD1   0
-#define SUB_BOARD2   1
+#define SUB_BOARD2   0
+
+
 
 #include "stdio.h"	
 #include "stdbool.h"

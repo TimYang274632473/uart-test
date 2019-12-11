@@ -138,7 +138,7 @@ void USART1_IRQHandler(void)
 		{
 		  USART_ReceiveData(USART1);
 			vb_usart1_dma_rx_flag = true;
-//			DMA_Cmd(DMA1_Channel5, DISABLE);
+			DMA_Cmd(DMA1_Channel5, DISABLE);
 //		  Write_RingBuff(&Uart1_Buff_st,USART_ReceiveData(USART1));//读取接收到的数据
 		}
 } 
@@ -148,7 +148,7 @@ void USART3_IRQHandler(void)
 		if(USART_GetITStatus(USART3, USART_IT_IDLE) != RESET) //接收中断
 		{
 		  USART_ReceiveData(USART3);
-			vb_usart3_dma_rx_flag = true;			
+//			vb_usart3_dma_rx_flag = true;			
 //		  Write_RingBuff(&Uart3_Buff_st,USART_ReceiveData(USART3));//读取接收到的数据
 		}
 }
@@ -192,8 +192,8 @@ void DMA1_Channel5_IRQHandler(void)
 {
 	if(DMA_GetFlagStatus(DMA1_IT_TC5)==SET)
 	{
-		DMA_ClearITPendingBit(DMA1_IT_TC5);
-		
+		DMA_Cmd(DMA1_Channel5, DISABLE);
+		DMA_ClearITPendingBit(DMA1_IT_TC5);		
 	}
 
 }
@@ -210,6 +210,7 @@ void DMA1_Channel3_IRQHandler(void)
 {
 	if(DMA_GetFlagStatus(DMA1_IT_TC3)==SET)
 	{
+		DMA_Cmd(DMA1_Channel3, DISABLE);
 		DMA_ClearITPendingBit(DMA1_IT_TC3);
 	}
 
@@ -343,13 +344,8 @@ void Uartx_Dma_Init(USART_TypeDef* USARTx, TX_RX_SELECT tx_or_rx,u8 preepriority
 
 
 void Usart_Dma_Tx_Enable(USART_TypeDef* USARTx,DMA_Channel_TypeDef*DMA_CHx,vb enable_flag,u16 buffer_lenth)
-{ 
-//	DMA_Cmd(DMA_CHx, DISABLE ); //关闭USART1 TX DMA1 所指示的通道 
-//	DMA_SetCurrDataCounter(DMA_CHx,35);//从新设置缓冲大小,指向数组0
-	DMA_Cmd(DMA_CHx, ENABLE); //使能USART1 TX DMA1 所指示的通道 
-	
-		//USARTx and tx channel corresponding dma channel
-	if(USARTx == USART1)
+{ 	
+	if(USARTx == USART1)		//USARTx and tx channel corresponding dma channel
 	{
 			DMA_CHx = DMA1_Channel5;			
 	}
@@ -369,7 +365,7 @@ void Usart_Dma_Tx_Enable(USART_TypeDef* USARTx,DMA_Channel_TypeDef*DMA_CHx,vb en
 	
 	if(enable_flag)
 	{
-		DMA_SetCurrDataCounter(DMA_CHx,buffer_lenth);
+		DMA_SetCurrDataCounter(DMA_CHx,buffer_lenth);		//从新设置缓冲大小,指向需要发送的数组
 		DMA_Cmd(DMA_CHx, ENABLE);
 	}
 	else

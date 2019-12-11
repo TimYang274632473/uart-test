@@ -76,15 +76,38 @@ u8 CAN_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 	CAN_Init(CAN1, &CAN_InitStructure);   
 
 	CAN_FilterInitStructure.CAN_FilterNumber=0;												//选择过滤器0
-	CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdMask; 	
-	CAN_FilterInitStructure.CAN_FilterScale=CAN_FilterScale_16bit; 	
-	CAN_FilterInitStructure.CAN_FilterIdHigh=0x0000;	
-	CAN_FilterInitStructure.CAN_FilterIdLow=0x0000;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh=0x0000;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow=0x0000;
+	CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdMask;			//列表模式
+	CAN_FilterInitStructure.CAN_FilterScale=CAN_FilterScale_16bit; 		//16bit
+//	CAN_FilterInitStructure.CAN_FilterMaskIdHigh=0x0000;
+//	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0x0000;	
+//	CAN_FilterInitStructure.CAN_FilterIdHigh= 0x0000;
+//	CAN_FilterInitStructure.CAN_FilterIdLow = 0x0000;	
+	
+	//RTR:0 数据帧   IDE:0 标准标识符  要求MSB  
+#if MAIN_BOARD	 
+	#if CAN_FILTER_LIST_MODE		//列表模式	
+		CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdList;			
+		CAN_FilterInitStructure.CAN_FilterMaskIdHigh=0x0000;
+		CAN_FilterInitStructure.CAN_FilterMaskIdLow=0x0000;	
+		CAN_FilterInitStructure.CAN_FilterIdHigh=(CAN_SUB1_STDID<<5)|CAN_Id_Standard|CAN_RTR_Data;	
+		CAN_FilterInitStructure.CAN_FilterIdLow =(CAN_SUB2_STDID<<5)|CAN_Id_Standard|CAN_RTR_Data;
+	#else 											//屏蔽位模式
+		CAN_FilterInitStructure.CAN_FilterIdHigh=0xFFFF;																						//高ID  (不使用）
+		CAN_FilterInitStructure.CAN_FilterMaskIdHigh=0xFFFF;																				//屏蔽高(不使用）		
+//		CAN_FilterInitStructure.CAN_FilterIdLow =(CAN_SUB1_STDID<<5)|CAN_Id_Standard|CAN_RTR_Data;	//底ID	(SUB1标准数据帧)		
+//		CAN_FilterInitStructure.CAN_FilterMaskIdLow =0xFFFF;	
+		CAN_FilterInitStructure.CAN_FilterIdLow 		= CAN_FILTER_STDID;				//底ID	(SUB1、2标准数据帧)		
+		CAN_FilterInitStructure.CAN_FilterMaskIdLow = CAN_FILTER_MASK_STDID;	//屏蔽底(完全匹配)
+
+	#endif
+	
+#else
+	CAN_FilterInitStructure.CAN_FilterIdHigh=0x0000;
+	CAN_FilterInitStructure.CAN_FilterIdLow =0x0000;	
+#endif
 	CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_Filter_FIFO0;//选择FIFO0
 	CAN_FilterInitStructure.CAN_FilterActivation=ENABLE;							//激活过滤器0
-	CAN_FilterInit(&CAN_FilterInitStructure);
+	CAN_FilterInit(&CAN_FilterInitStructure);	
 	
 #if CAN_RX0_INT_ENABLE 
 	CAN_ITConfig(CAN1,CAN_IT_FMP0,ENABLE);														//FIFO0消息挂号中断允许.		    
@@ -116,6 +139,13 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 		CAN_Receive(CAN1,CAN_FIFO0, &RxMessage);
 		can_rx_flag = true;	
 	}	
+	//error 重启can
+	if(CAN_GetITStatus(CAN1,CAN_IT_ERR) == SET)
+	{
+		CAN_ClearITPendingBit(CAN1,CAN_IT_ERR);
+		CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,8,CAN_Mode_Normal);			//500k bps
+//		CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,8,CAN_Mode_Normal);			//250k bps
+	}	
 	
 //	//send buff empty
 //	if(CAN_GetITStatus(CAN1,CAN_IT_TME) == SET)
@@ -142,7 +172,7 @@ u8 Can_Send_Msg(u8* msg,u8 len)
 	TxMessage.StdId=CAN_SUB2_STDID;			// 标准标识符 
 #endif 
 	
-	TxMessage.ExtId=0x0;						// 设置扩展标示符 
+	TxMessage.ExtId=0x00;						// 设置扩展标示符 
 	TxMessage.IDE=CAN_Id_Standard;	// 标准帧
 	TxMessage.RTR=CAN_RTR_Data;			// 数据帧
 	TxMessage.DLC=len;							// 要发送的数据长度

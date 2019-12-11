@@ -3,12 +3,21 @@
     
 #include "config.h"
 
+#define CAN_FILTER_LIST_MODE		 0										//是否使用列表模式
+
 //CAN接收RX0中断使能
-#define CAN_RX0_INT_ENABLE			 1															//0,不使能;1,使能.		
-#define CAN_RTX_LEN							 8
-#define CAN_MAIN_STDID           0x101
-#define CAN_SUB1_STDID           0x201
-#define CAN_SUB2_STDID           0x301
+#define CAN_RX0_INT_ENABLE			 1										//0,不使能;1,使能.		
+#define CAN_RTX_LEN							 8										//CAN数据长度
+#define CAN_MAIN_STDID           (u16)0x101
+#define CAN_SUB1_STDID           (u16)0x201
+#define CAN_SUB2_STDID           (u16)0x301
+#define CAN_RTX_EXTEID					 (u32)0x18FFA2F4
+
+
+#define CAN_FILTER_STDID				 (((CAN_SUB1_STDID<<5)|CAN_Id_Standard|CAN_RTR_Data)&((CAN_SUB2_STDID<<5)|CAN_Id_Standard|CAN_RTR_Data))   
+#define CAN_FILTER_MASK_STDID    (u16)~(((CAN_SUB1_STDID<<5)|CAN_Id_Standard|CAN_RTR_Data)^((CAN_SUB2_STDID<<5)|CAN_Id_Standard|CAN_RTR_Data))
+
+
 
 extern CanRxMsg	RxMessage;
 extern CanTxMsg	TxMessage;
