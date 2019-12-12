@@ -33,12 +33,12 @@ int main(void)
 			
 			if(st_tick_for_task.bl_arrive_1ms_flag == true)												//task exe
 			{
-				st_tick_for_task.fp_systick_1ms();
+//				st_tick_for_task.fp_systick_1ms();
 				st_tick_for_task.bl_arrive_1ms_flag = false;
 			}
 			if(st_tick_for_task.bl_arrive_5ms_flag == true)
 			{
-				st_tick_for_task.fp_systick_5ms();
+//				st_tick_for_task.fp_systick_5ms();
 				st_tick_for_task.bl_arrive_5ms_flag = false;
 			}
 			if(st_tick_for_task.bl_arrive_10ms_flag == true)

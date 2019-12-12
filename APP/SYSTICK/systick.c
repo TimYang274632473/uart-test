@@ -73,53 +73,75 @@ void Task_1000MS(void)
 }
 void Task_100MS(void)
 {	
-#if SUB_BOARD1
-	u32 temp = 0;
-	
-	temp = can_tx_count++;
-	for(u8 i=0;i<4;i++)
-	{
-		CAN_SUB1_TX_BUFF[i] = (u8)(temp >> 8*i);
-	}
-	if(Can_Send_Msg(CAN_SUB1_TX_BUFF,CAN_RTX_LEN))
-	{
-		printf("can send fail \r\n");
-	}
-#endif
-#if SUB_BOARD2 
-	
-	u32 temp = 0;
-	
-	temp = can_tx_count++;
-	for(u8 i=0;i<4;i++)
-	{
-		CAN_SUB2_TX_BUFF[i] = (u8)(temp >> 8*i);
-	}
-	if(Can_Send_Msg(CAN_SUB2_TX_BUFF,CAN_RTX_LEN))
-	{
-//		printf("can send fail \r\n");
-	}
+#if REMOTE_FRAME_TEST
+
+#else		
+	#if SUB_BOARD1
+		u32 temp = 0;
+		
+		temp = can_tx_count++;
+		for(u8 i=0;i<4;i++)
+		{
+			CAN_SUB1_TX_BUFF[i] = (u8)(temp >> 8*i);
+		}
+		if(Can_Send_Msg(CAN_SUB1_TX_BUFF,CAN_RTX_LEN,frame_type))
+		{
+			printf("can send fail \r\n");
+		}
+	#endif
+	#if SUB_BOARD2 
+		
+		u32 temp = 0;
+		
+		temp = can_tx_count++;
+		for(u8 i=0;i<4;i++)
+		{
+			CAN_SUB2_TX_BUFF[i] = (u8)(temp >> 8*i);
+		}
+		if(Can_Send_Msg(CAN_SUB2_TX_BUFF,CAN_RTX_LEN))
+		{
+	//		printf("can send fail \r\n");
+		}
+	#endif
 #endif
 //	printf("100\r\n");	
 }
 void Task_10MS(void)
 {
 #if REMOTE_FRAME_TEST
-		static u16 remote_req_count = 0;
-	if(remote_req_count % 2 == 0)
-	{
-		
-	}
-	else
-	{
+		#if MAIN_BOARD
+			static u16 remote_req_count = 0 ,uv16_remote_communication_record = 0;
 	
-	}
-	remote_req_count++;
-
-	if(Can_Send_Msg(*p_u8_can_rx,CAN_RTX_LEN,REMOTE_FRAME))
-	{
-		//send error
-	}
+		if(remote_req_count % 2 == 0)		//轮流请求远程ID
+		{
+			TxMessage.StdId=CAN_SUB2_STDID;		
+		}
+		else
+		{
+			TxMessage.StdId=CAN_SUB1_STDID;
+		}	
+		remote_req_count++; 
+		if(Can_Send_Msg(*p_u8_can_rx,CAN_RTX_LEN,frame_type))
+		{
+			//send error
+		}
+		uv16_remote_communication_record = vu16_now_systick_count; 		//开始时间记录，没有处理count == 5000情况
+		while(can_sub1_rx_flag | can_sub2_rx_flag)								//没收到最新数据
+		{
+			st_tick_for_task.fp_systick_1ms();
+			if(vu16_now_systick_count >= uv16_remote_communication_record+2)
+			{			
+				//串口打印MAIN的0数据表示无反馈数据
+				DMA_InitStructure.DMA_MemoryBaseAddr = (u32)CAN_MAIN_TX_BUFF; 
+				DMA_Init(DMA1_Channel2, &DMA_InitStructure); 
+				DMA_SetCurrDataCounter(DMA1_Channel2,CAN_RTX_LEN);
+				Usart_Dma_Tx_Enable(USART3,DMA1_Channel2,ENABLE,CAN_RTX_LEN);	
+				break;
+			}
+		}	
+		//正常数据打印
+		st_tick_for_task.fp_systick_5ms();
+		#endif
 		
 #endif
 //	if(can_rx_flag)
@@ -152,7 +174,21 @@ void Task_1MS(void)
 			}
 			can_rx_flag = false;
 		}
-	#endif		
+	#else
+		if(can_rx_flag)
+		{
+			for(u8 i=0;i<8;i++)
+			{
+				(*p_u8_can_rx)[7-i] = RxMessage.Data[i];
+			}
+			
+			if(Can_Send_Msg(*p_u8_can_rx,CAN_RTX_LEN,frame_type))
+			{
+				//send error
+			}
+			can_rx_flag = false;
+		}
+	#endif
 	
 //	printf("1\r\n");
 }
@@ -173,39 +209,43 @@ void Task_50MS(void)
 //CAN数据uart打印和发送
 void Task_5MS(void)
 {
-#if MAIN_BOARD
-if(can_sub1_rx_flag)
-	{
-		if(Can_Send_Msg(*p_u8_can_rx,CAN_RTX_LEN,DATA_FRAME))
+//#if REMOTE_FRAME_TEST
+////remote test code
+//#else	
+	#if MAIN_BOARD
+	if(can_sub1_rx_flag)
 		{
-			//send error
+			if(Can_Send_Msg(*p_u8_can_rx,CAN_RTX_LEN,frame_type))
+			{
+				//send error
+			}
+			
+			//打印can接收数据
+			DMA_InitStructure.DMA_MemoryBaseAddr = (u32)(*p_u8_can_rx); 
+			DMA_Init(DMA1_Channel2, &DMA_InitStructure); 
+			
+			DMA_SetCurrDataCounter(DMA1_Channel2,CAN_RTX_LEN);
+			Usart_Dma_Tx_Enable(USART3,DMA1_Channel2,ENABLE,CAN_RTX_LEN);	
+			can_sub1_rx_flag = false;
 		}
-		
-		//打印can接收数据
-		DMA_InitStructure.DMA_MemoryBaseAddr = (u32)(*p_u8_can_rx); 
-		DMA_Init(DMA1_Channel2, &DMA_InitStructure); 
-		
-		DMA_SetCurrDataCounter(DMA1_Channel2,CAN_RTX_LEN);
-		Usart_Dma_Tx_Enable(USART3,DMA1_Channel2,ENABLE,CAN_RTX_LEN);	
-		can_sub1_rx_flag = false;
-	}
-if(can_sub2_rx_flag)
-	{
-		if(Can_Send_Msg(*p_u8_can_rx,CAN_RTX_LEN,DATA_FRAME))
+	if(can_sub2_rx_flag)
 		{
-			//send error
-		}
+			if(Can_Send_Msg(*p_u8_can_rx,CAN_RTX_LEN,frame_type))
+			{
+				//send error
+			}
+			
+			//打印can接收数据
+			DMA_InitStructure.DMA_MemoryBaseAddr = (u32)(*p_u8_can_rx); 
+			DMA_Init(DMA1_Channel2, &DMA_InitStructure); 
+			
+			DMA_SetCurrDataCounter(DMA1_Channel2,CAN_RTX_LEN);
+			Usart_Dma_Tx_Enable(USART3,DMA1_Channel2,ENABLE,CAN_RTX_LEN);	
+			can_sub2_rx_flag = false;
+		}	
 		
-		//打印can接收数据
-		DMA_InitStructure.DMA_MemoryBaseAddr = (u32)(*p_u8_can_rx); 
-		DMA_Init(DMA1_Channel2, &DMA_InitStructure); 
-		
-		DMA_SetCurrDataCounter(DMA1_Channel2,CAN_RTX_LEN);
-		Usart_Dma_Tx_Enable(USART3,DMA1_Channel2,ENABLE,CAN_RTX_LEN);	
-		can_sub2_rx_flag = false;
-	}	
-	
-#endif
+	#endif
+//#endif
 //	if(vb_usart1_dma_rx_flag == true)
 //	{
 //		DMA_SetCurrDataCounter(DMA1_Channel4,USART1_TX_LEN);

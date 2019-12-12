@@ -3,9 +3,9 @@
 
 #define REMOTE_FRAME_TEST		1
 
-#define MAIN_BOARD   				1
+#define MAIN_BOARD   				0
 #define SUB_BOARD1   				0
-#define SUB_BOARD2   				0
+#define SUB_BOARD2   				1
 
 
 

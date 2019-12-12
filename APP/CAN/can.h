@@ -27,6 +27,7 @@ typedef enum
 
 extern CanRxMsg	RxMessage;
 extern CanTxMsg	TxMessage;
+extern FRAME_TYPE frame_type;
 extern vb can_tx_flag;
 extern vb can_rx_flag;
 extern u8 (*p_u8_can_rx)[CAN_RTX_LEN];

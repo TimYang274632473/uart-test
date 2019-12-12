@@ -2,6 +2,17 @@
 
 CanRxMsg	RxMessage;
 CanTxMsg	TxMessage;
+
+#if REMOTE_FRAME_TEST
+	#if MAIN_BOARD
+		FRAME_TYPE frame_type = REMOTE_FRAME;
+	#else
+		FRAME_TYPE frame_type = DATA_FRAME;
+	#endif
+#else
+FRAME_TYPE frame_type = DATA_FRAME;
+#endif
+
 vb can_tx_flag;			
 vb can_rx_flag;													//接收帧标志
 
@@ -13,6 +24,7 @@ u8 CAN_SUB1_RX_BUFF[CAN_RTX_LEN]={0};
 u8 CAN_SUB1_TX_BUFF[CAN_RTX_LEN]={0x00,0x00,0x00,0x00,0x11,0x11,0x11,0x11};
 u8 CAN_SUB2_RX_BUFF[CAN_RTX_LEN]={0};
 u8 CAN_SUB2_TX_BUFF[CAN_RTX_LEN]={0x00,0x00,0x00,0x00,0x22,0x22,0x22,0x22};
+
 vb can_main_rx_flag = false;
 vb can_main_tx_flag = false;
 vb can_sub1_rx_flag = false;
@@ -76,7 +88,7 @@ u8 CAN_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 	CAN_Init(CAN1, &CAN_InitStructure);   
 
 	CAN_FilterInitStructure.CAN_FilterNumber=0;												//选择过滤器0
-	CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdMask;			//列表模式
+	CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdMask;			//屏蔽位模式
 	CAN_FilterInitStructure.CAN_FilterScale=CAN_FilterScale_16bit; 		//16bit
 //	CAN_FilterInitStructure.CAN_FilterMaskIdHigh=0x0000;
 //	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0x0000;	
@@ -102,9 +114,12 @@ u8 CAN_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 	#endif
 	
 #else
-	CAN_FilterInitStructure.CAN_FilterIdHigh=0x0000;
-	CAN_FilterInitStructure.CAN_FilterIdLow =0x0000;	
+		CAN_FilterInitStructure.CAN_FilterMaskIdHigh= 0x0000;
+		CAN_FilterInitStructure.CAN_FilterIdHigh		= 0x0000;
+		CAN_FilterInitStructure.CAN_FilterMaskIdLow = 0x0000;	
+		CAN_FilterInitStructure.CAN_FilterIdLow 		= 0x0000;
 #endif
+
 	CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_Filter_FIFO0;//选择FIFO0
 	CAN_FilterInitStructure.CAN_FilterActivation=ENABLE;							//激活过滤器0
 	CAN_FilterInit(&CAN_FilterInitStructure);	
@@ -143,8 +158,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	if(CAN_GetITStatus(CAN1,CAN_IT_ERR) == SET)
 	{
 		CAN_ClearITPendingBit(CAN1,CAN_IT_ERR);
-		CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,8,CAN_Mode_Normal);			//500k bps
-//		CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,8,CAN_Mode_Normal);			//250k bps
+		CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,8,CAN_Mode_Normal);			//250k bps
 	}	
 	
 //	//send buff empty
@@ -164,17 +178,37 @@ u8 Can_Send_Msg(u8* msg,u8 len,FRAME_TYPE frame_type)
 {	
 	u8 mbox;
 	u16 i=0;
-#if MAIN_BOARD
-	TxMessage.StdId=CAN_MAIN_STDID;			// 标准标识符 
-#elif SUB_BOARD1
-	TxMessage.StdId=CAN_SUB1_STDID;			// 标准标识符 
-#elif SUB_BOARD2
-	TxMessage.StdId=CAN_SUB2_STDID;			// 标准标识符 
-#endif 
+#if REMOTE_FRAME_TEST
+		#if MAIN_BOARD
+//			TxMessage.StdId=CAN_MAIN_STDID;			// 标准标识符 
+		#elif SUB_BOARD1
+			TxMessage.StdId=CAN_SUB1_STDID;			// 标准标识符 
+		#elif SUB_BOARD2
+			TxMessage.StdId=CAN_SUB2_STDID;			// 标准标识符 
+		#endif
+#else	
+	#if MAIN_BOARD
+		TxMessage.StdId=CAN_MAIN_STDID;			// 标准标识符 
+	#elif SUB_BOARD1
+		TxMessage.StdId=CAN_SUB1_STDID;			// 标准标识符 
+	#elif SUB_BOARD2
+		TxMessage.StdId=CAN_SUB2_STDID;			// 标准标识符 
+	#endif 
+#endif	
+
+	
+	if(frame_type == REMOTE_FRAME)
+	{
+		TxMessage.RTR=CAN_RTR_Remote;			// 远程帧
+	}
+	else
+	{
+		TxMessage.RTR=CAN_RTR_Data;				// 数据帧
+	}
 	
 	TxMessage.ExtId=0x00;						// 设置扩展标示符 
 	TxMessage.IDE=CAN_Id_Standard;	// 标准帧
-	TxMessage.RTR=CAN_RTR_Data;			// 数据帧
+	
 	TxMessage.DLC=len;							// 要发送的数据长度
 	for(i=0;i<len;i++)
 	TxMessage.Data[i]=msg[i];			 
