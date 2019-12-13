@@ -100,24 +100,35 @@ u8 CAN_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 	#if CAN_FILTER_LIST_MODE		//列表模式	
 		CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdList;			
 		CAN_FilterInitStructure.CAN_FilterMaskIdHigh=0x0000;
-		CAN_FilterInitStructure.CAN_FilterMaskIdLow=0x0000;	
-		CAN_FilterInitStructure.CAN_FilterIdHigh=(CAN_SUB1_STDID<<5)|CAN_Id_Standard|CAN_RTR_Data;	
-		CAN_FilterInitStructure.CAN_FilterIdLow =(CAN_SUB2_STDID<<5)|CAN_Id_Standard|CAN_RTR_Data;
-	#else 											//屏蔽位模式
-		CAN_FilterInitStructure.CAN_FilterIdHigh=0xFFFF;																						//高ID  (不使用）
-		CAN_FilterInitStructure.CAN_FilterMaskIdHigh=0xFFFF;																				//屏蔽高(不使用）		
-//		CAN_FilterInitStructure.CAN_FilterIdLow =(CAN_SUB1_STDID<<5)|CAN_Id_Standard|CAN_RTR_Data;	//底ID	(SUB1标准数据帧)		
-//		CAN_FilterInitStructure.CAN_FilterMaskIdLow =0xFFFF;	
-		CAN_FilterInitStructure.CAN_FilterIdLow 		= CAN_FILTER_STDID;				//底ID	(SUB1、2标准数据帧)		
-		CAN_FilterInitStructure.CAN_FilterMaskIdLow = CAN_FILTER_MASK_STDID;	//屏蔽底(完全匹配)
+		CAN_FilterInitStructure.CAN_FilterMaskIdLow =0x0000;	
+		CAN_FilterInitStructure.CAN_FilterIdHigh=CAN_FILTER_STD_DATA_SUB2;							//接收SUB2标准数据帧
+		CAN_FilterInitStructure.CAN_FilterIdLow =CAN_FILTER_STD_DATA_SUB1;							//接收SUB1标准数据帧
+	#else 											//屏蔽位模式			
+		CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdMask;			
+		CAN_FilterInitStructure.CAN_FilterMaskIdHigh=0xFFFF;														//屏蔽高(不使用）
+		CAN_FilterInitStructure.CAN_FilterMaskIdLow =CAN_FILTER_MASK_STD_DATA_DOUBLE;		//屏蔽底(完全匹配)		
+		CAN_FilterInitStructure.CAN_FilterIdHigh		=0xFFFF;														//高ID  (不使用）
+		CAN_FilterInitStructure.CAN_FilterIdLow 		=CAN_FILTER_STD_DATA_DOUBLE;				//底ID	(SUB1、2标准数据帧)		
+		
 
 	#endif
 	
-#else
+#elif SUB_BOARD1
+	#if CAN_FILTER_LIST_MODE		//列表模式
+		CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdList;
 		CAN_FilterInitStructure.CAN_FilterMaskIdHigh= 0x0000;
 		CAN_FilterInitStructure.CAN_FilterIdHigh		= 0x0000;
 		CAN_FilterInitStructure.CAN_FilterMaskIdLow = 0x0000;	
-		CAN_FilterInitStructure.CAN_FilterIdLow 		= 0x0000;
+		CAN_FilterInitStructure.CAN_FilterIdLow 		= CAN_FILTER_STD_REMOTE_SUB1;		//仅接收SUB1远程帧
+	#endif
+#elif SUB_BOARD2
+	#if CAN_FILTER_LIST_MODE		//列表模式
+		CAN_FilterInitStructure.CAN_FilterMode			= CAN_FilterMode_IdList;			//列表模式
+		CAN_FilterInitStructure.CAN_FilterMaskIdHigh= 0x0000;
+		CAN_FilterInitStructure.CAN_FilterIdHigh		= 0x0000;
+		CAN_FilterInitStructure.CAN_FilterMaskIdLow = 0x0000;	
+		CAN_FilterInitStructure.CAN_FilterIdLow 		= CAN_FILTER_STD_REMOTE_SUB2;		//仅接收SUB2远程帧
+	#endif
 #endif
 
 	CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_Filter_FIFO0;//选择FIFO0

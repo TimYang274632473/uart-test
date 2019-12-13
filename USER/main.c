@@ -10,7 +10,8 @@ int main(void)
 		NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); 
 		Systick_Init(1000);	    	  																					//1k HzÐÄÌø		
 		Uart1_Init(115200);	 
-		Uart3_Init(230000);	
+//		Uart3_Init(230000);
+		Uart3_Init(115200);		
 //		Uartx_Dma_Init(USART1,RX,0,0,(u32 *)USART1_RX_BUF,USART1_RX_LEN);
 //		Uartx_Dma_Init(USART1,TX,0,1,(u32 *)USART1_TX_BUF,USART1_TX_LEN);
 		Uartx_Dma_Init(USART3,RX,3,0,(u32 *)USART3_RX_BUF,USART3_RX_LEN);
@@ -30,17 +31,20 @@ int main(void)
 		if(vu16_now_systick_count > vu16_last_systick_count)
 		{
 			Mark_Task_Flag(&vu16_now_systick_count , &st_tick_for_task);					//flag mark
+			#if MAIN_BOARD
 			
+			#else
 			if(st_tick_for_task.bl_arrive_1ms_flag == true)												//task exe
 			{
-//				st_tick_for_task.fp_systick_1ms();
+				st_tick_for_task.fp_systick_1ms();
 				st_tick_for_task.bl_arrive_1ms_flag = false;
 			}
 			if(st_tick_for_task.bl_arrive_5ms_flag == true)
 			{
-//				st_tick_for_task.fp_systick_5ms();
+				st_tick_for_task.fp_systick_5ms();
 				st_tick_for_task.bl_arrive_5ms_flag = false;
 			}
+			#endif
 			if(st_tick_for_task.bl_arrive_10ms_flag == true)
 			{
 				st_tick_for_task.fp_systick_10ms();
