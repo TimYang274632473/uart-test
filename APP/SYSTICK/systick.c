@@ -117,10 +117,10 @@ void Task_10MS(void)
 //	}
 	//	printf("10\r\n");
 }
-//CANÊı¾İ½ÓÊÕ¼ì²â±£´æ
+//CANæ•°æ®æ¥æ”¶æ£€æµ‹ä¿å­˜
 void Task_1MS(void)
 {
-	//½ÓÊÕµ½CANÊı¾İ
+	//æ¥æ”¶åˆ°CANæ•°æ®
 	if(can_rx_flag)
 	{
 	#if MAIN_BOARD	
@@ -198,7 +198,7 @@ void Task_500MS(void)
 		#if MAIN_BOARD
 			static u16 remote_req_count = 0 ,uv16_remote_communication_record = 0;
 	
-			if(remote_req_count % 2 == 0)		//ÂÖÁ÷ÇëÇóÔ¶³ÌID
+			if(remote_req_count % 2 == 0)		//è½®æµè¯·æ±‚è¿œç¨‹ID
 			{
 				TxMessage.StdId=CAN_SUB2_STDID;		
 			}
@@ -211,13 +211,13 @@ void Task_500MS(void)
 			{
 				//send error
 			}
-			uv16_remote_communication_record = vu16_now_systick_count; 		//¿ªÊ¼Ê±¼ä¼ÇÂ¼£¬Ã»ÓĞ´¦Àícount == 5000Çé¿ö
-			while(!(can_sub1_rx_flag | can_sub2_rx_flag))								//Ã»ÊÕµ½×îĞÂÊı¾İ
+			uv16_remote_communication_record = vu16_now_systick_count; 		//å¼€å§‹æ—¶é—´è®°å½•ï¼Œæ²¡æœ‰å¤„ç†count == 5000æƒ…å†µ
+			while(!(can_sub1_rx_flag | can_sub2_rx_flag))								//æ²¡æ”¶åˆ°æœ€æ–°æ•°æ®
 			{
 				st_tick_for_task.fp_systick_1ms();
-				if(vu16_now_systick_count >= uv16_remote_communication_record+1)
+				if(vu16_now_systick_count >= uv16_remote_communication_record+5)
 				{			
-					//´®¿Ú´òÓ¡MAINµÄ0Êı¾İ±íÊ¾ÎŞ·´À¡Êı¾İ
+					//ä¸²å£æ‰“å°MAINçš„0æ•°æ®è¡¨ç¤ºæ— åé¦ˆæ•°æ®
 					DMA_InitStructure.DMA_MemoryBaseAddr = (u32)CAN_MAIN_TX_BUFF; 
 					DMA_Init(DMA1_Channel2, &DMA_InitStructure); 
 					DMA_SetCurrDataCounter(DMA1_Channel2,CAN_RTX_LEN);
@@ -225,7 +225,7 @@ void Task_500MS(void)
 					break;
 				}
 			}	
-		//Õı³£Êı¾İ´òÓ¡
+		//æ­£å¸¸æ•°æ®æ‰“å°
 		st_tick_for_task.fp_systick_5ms();
 		#endif
 		
@@ -236,7 +236,7 @@ void Task_50MS(void)
 {
 //	printf("50\r\n");
 }
-//CANÊı¾İuart´òÓ¡ºÍ·¢ËÍ
+//CANæ•°æ®uartæ‰“å°å’Œå‘é€
 void Task_5MS(void)
 {
 
@@ -251,7 +251,7 @@ void Task_5MS(void)
 				//send error
 			}
 			#endif
-			//´òÓ¡can½ÓÊÕÊı¾İ
+			//æ‰“å°canæ¥æ”¶æ•°æ®
 			DMA_InitStructure.DMA_MemoryBaseAddr = (u32)(*p_u8_can_rx); 
 			DMA_Init(DMA1_Channel2, &DMA_InitStructure); 
 			
@@ -270,7 +270,7 @@ void Task_5MS(void)
 			}
 			#endif
 			
-			//´òÓ¡can½ÓÊÕÊı¾İ
+			//æ‰“å°canæ¥æ”¶æ•°æ®
 			DMA_InitStructure.DMA_MemoryBaseAddr = (u32)(*p_u8_can_rx); 
 			DMA_Init(DMA1_Channel2, &DMA_InitStructure); 
 			
