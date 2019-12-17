@@ -1,7 +1,10 @@
 #include "config.h"
 
 vu16 vu16_last_systick_count=0,vu16_now_systick_count=0;
-st_TICK_COUNT_FOR_TASK st_tick_for_task;
+st_TICK_COUNT_FOR_TASK 	st_tick_for_task;
+
+em_TICK_ARRIVE_FLAG			em_flag;
+ST_TICK_TASK			 			st_task;
 
 static u32 can_tx_count = 0;
 
@@ -19,6 +22,136 @@ void Systick_Init(u16 frequence)
 	SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk | SysTick_CTRL_TICKINT_Msk |SysTick_CLKSource_HCLK_Div8 ;	
 }	
 
+/***************************************************************
+  *  @fun    名称:Mark_Enum_Task_Flag(vu16 *p_systick_count ,em_TICK_ARRIVE_FLAG *em_tick_flag)
+  *  @brief   功能:通过systick计数对任务计时标志刷新
+  *  @param   参数:*p_systick_count   计数值     *em_tick_flag标志保存
+  *  @Sample 使用:定时器最小计数周期调用
+  *  @note      备注:
+ **************************************************************/
+
+void Mark_Enum_Task_Flag(vu16 *p_systick_count ,em_TICK_ARRIVE_FLAG *em_tick_flag)
+{
+		if((*p_systick_count % ARRIVE_1MS) == 0)
+		{
+			em_tick_flag->tick_flag.bl_arrive_1ms_flag = true;
+		}
+		if((*p_systick_count % ARRIVE_2MS) == 0)
+		{
+			em_tick_flag->tick_flag.bl_arrive_2ms_flag = true;
+		}		
+		if((*p_systick_count % ARRIVE_5MS) == 0)
+		{
+			em_tick_flag->tick_flag.bl_arrive_5ms_flag = true;
+		}
+		if((*p_systick_count % ARRIVE_10MS) == 0)
+		{
+			em_tick_flag->tick_flag.bl_arrive_10ms_flag = true;
+		}
+		if((*p_systick_count % ARRIVE_20MS) == 0)
+		{
+			em_tick_flag->tick_flag.bl_arrive_20ms_flag = true;
+		}		
+		if((*p_systick_count % ARRIVE_50MS) == 0)
+		{
+			em_tick_flag->tick_flag.bl_arrive_50ms_flag = true;
+		}
+		if((*p_systick_count % ARRIVE_100MS) == 0)
+		{
+			em_tick_flag->tick_flag.bl_arrive_100ms_flag = true;
+		}
+		if((*p_systick_count % ARRIVE_200MS) == 0)
+		{
+			em_tick_flag->tick_flag.bl_arrive_200ms_flag = true;
+		}		
+		if((*p_systick_count % ARRIVE_500MS) == 0)
+		{
+			em_tick_flag->tick_flag.bl_arrive_500ms_flag = true;
+		}
+		if((*p_systick_count % ARRIVE_1000MS) == 0)
+		{
+			em_tick_flag->tick_flag.bl_arrive_1000ms_flag = true;
+		}
+		if((*p_systick_count % ARRIVE_2000MS) == 0)
+		{
+			em_tick_flag->tick_flag.bl_arrive_2000ms_flag = true;
+		}	
+		if((*p_systick_count % ARRIVE_5000MS) == 0)
+		{
+			em_tick_flag->tick_flag.bl_arrive_5000ms_flag = true;
+		}
+		
+}
+/***************************************************************
+  *  @fun    名称:Task_Deal(em_TICK_ARRIVE_FLAG *em_tick_flag ,ST_TICK_TASK *st_task_pfun)
+  *  @brief   功能:通过*em_tick_flag标志选择*st_task_pfun中函数指针对应的回调
+  *  @param   参数:*em_tick_flag   定时标志     *st_task_pfun任务指针
+  *  @Sample 使用:主循环调用
+  *  @note      备注:
+ **************************************************************/
+void Task_Deal(em_TICK_ARRIVE_FLAG *em_tick_flag ,ST_TICK_TASK *st_task_pfun)
+{
+			if(em_tick_flag->tick_flag.bl_arrive_1ms_flag == true)
+			{
+				st_task_pfun->fp_systick_1ms();
+				em_tick_flag->tick_flag.bl_arrive_1ms_flag = false;
+			}
+			if(em_tick_flag->tick_flag.bl_arrive_2ms_flag == true)
+			{
+				st_task_pfun->fp_systick_2ms();
+				em_tick_flag->tick_flag.bl_arrive_2ms_flag = false;
+			}
+			if(em_tick_flag->tick_flag.bl_arrive_5ms_flag == true)
+			{
+				st_task_pfun->fp_systick_5ms();
+				em_tick_flag->tick_flag.bl_arrive_5ms_flag = false;
+			}	
+			if(em_tick_flag->tick_flag.bl_arrive_10ms_flag == true)
+			{
+				st_task_pfun->fp_systick_10ms();
+				em_tick_flag->tick_flag.bl_arrive_10ms_flag = false;
+			}
+			if(em_tick_flag->tick_flag.bl_arrive_20ms_flag == true)
+			{
+				st_task_pfun->fp_systick_20ms();
+				em_tick_flag->tick_flag.bl_arrive_20ms_flag = false;
+			}
+			if(em_tick_flag->tick_flag.bl_arrive_50ms_flag == true)
+			{
+				st_task_pfun->fp_systick_5ms();
+				em_tick_flag->tick_flag.bl_arrive_50ms_flag = false;
+			}	
+			if(em_tick_flag->tick_flag.bl_arrive_100ms_flag == true)
+			{
+				st_task_pfun->fp_systick_100ms();
+				em_tick_flag->tick_flag.bl_arrive_100ms_flag = false;
+			}
+			if(em_tick_flag->tick_flag.bl_arrive_200ms_flag == true)
+			{
+				st_task_pfun->fp_systick_200ms();
+				em_tick_flag->tick_flag.bl_arrive_200ms_flag = false;
+			}
+			if(em_tick_flag->tick_flag.bl_arrive_500ms_flag == true)
+			{
+				st_task_pfun->fp_systick_500ms();
+				em_tick_flag->tick_flag.bl_arrive_500ms_flag = false;
+			}	
+			if(em_tick_flag->tick_flag.bl_arrive_1000ms_flag == true)
+			{
+				st_task_pfun->fp_systick_1000ms();
+				em_tick_flag->tick_flag.bl_arrive_1000ms_flag = false;
+			}
+			if(em_tick_flag->tick_flag.bl_arrive_2000ms_flag == true)
+			{
+				st_task_pfun->fp_systick_2000ms();
+				em_tick_flag->tick_flag.bl_arrive_2000ms_flag = false;
+			}
+			if(em_tick_flag->tick_flag.bl_arrive_5000ms_flag == true)
+			{
+				st_task_pfun->fp_systick_5000ms();
+				em_tick_flag->tick_flag.bl_arrive_5000ms_flag = false;
+			}	
+}
 void Mark_Task_Flag(vu16 *p_systick_count ,st_TICK_COUNT_FOR_TASK *st_task_flag)
 {
 		if((*p_systick_count % ARRIVE_1MS) == 0)
@@ -54,7 +187,7 @@ void Mark_Task_Flag(vu16 *p_systick_count ,st_TICK_COUNT_FOR_TASK *st_task_flag)
 			st_task_flag->bl_arrive_5000ms_flag = true;
 		}
 }
-void TICK_Task_fpConfig(st_TICK_COUNT_FOR_TASK *st_task_flag)
+ void TICK_Task_fpConfig(st_TICK_COUNT_FOR_TASK *st_task_flag)
 {
 	st_task_flag->fp_systick_5000ms = Task_5000MS;
 	st_task_flag->fp_systick_500ms  = Task_500MS;

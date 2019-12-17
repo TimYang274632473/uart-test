@@ -5,4 +5,8 @@
 #  []括号中为单字符匹配列表
 
 /OBJ
-/keil kill
+/USER/DebugConfig/
+/USER/RTE/
+/USER/USART.map
+/USER/JLinkLog.txt
+/USER/EventRecorderStub.scvd

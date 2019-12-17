@@ -1,8 +1,8 @@
 ../obj/misc.o: ..\STM32F10x_FWLib\src\misc.c \
   ..\STM32F10x_FWLib\inc\misc.h ..\USER\stm32f10x.h ..\CORE\core_cm3.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h \
+  C:\TIM\software\MDK526\ARM\ARMCLANG\Bin\..\include\stdint.h \
   ..\USER\system_stm32f10x.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h \
+  C:\TIM\software\MDK526\ARM\ARMCLANG\Bin\..\include\stdbool.h \
   ..\USER\stm32f10x_conf.h ..\STM32F10x_FWLib\inc\stm32f10x_adc.h \
   ..\STM32F10x_FWLib\inc\stm32f10x_bkp.h \
   ..\STM32F10x_FWLib\inc\stm32f10x_can.h \

@@ -3,7 +3,7 @@
 
 
 
-extern st_TICK_COUNT_FOR_TASK st_tick_for_task; 
+
 
 int main(void)
 	{		
@@ -31,51 +31,56 @@ int main(void)
 		if(vu16_now_systick_count > vu16_last_systick_count)
 		{
 			Mark_Task_Flag(&vu16_now_systick_count , &st_tick_for_task);					//flag mark
-			#if MAIN_BOARD
-			
-			#else
-			if(st_tick_for_task.bl_arrive_1ms_flag == true)												//task exe
-			{
-				st_tick_for_task.fp_systick_1ms();
-				st_tick_for_task.bl_arrive_1ms_flag = false;
+			Mark_Enum_Task_Flag(&vu16_now_systick_count , &em_flag);
+			Task_Deal(&em_flag,&st_task);
+	if(0)
+	{		
+//			#if MAIN_BOARD
+//			
+//			#else
+//			if(st_tick_for_task.bl_arrive_1ms_flag == true)												//task exe
+//			{
+//				st_tick_for_task.fp_systick_1ms();
+//				st_tick_for_task.bl_arrive_1ms_flag = false;
+//			}
+//			if(st_tick_for_task.bl_arrive_5ms_flag == true)
+//			{
+//				st_tick_for_task.fp_systick_5ms();
+//				st_tick_for_task.bl_arrive_5ms_flag = false;
+//			}
+//			#endif
+//			if(st_tick_for_task.bl_arrive_10ms_flag == true)
+//			{
+//				st_tick_for_task.fp_systick_10ms();
+//				st_tick_for_task.bl_arrive_10ms_flag = false;
+//			}
+//			if(st_tick_for_task.bl_arrive_50ms_flag == true)
+//			{
+//				st_tick_for_task.fp_systick_50ms();
+//				st_tick_for_task.bl_arrive_50ms_flag = false;
+//			}
+//			if(st_tick_for_task.bl_arrive_100ms_flag == true)
+//			{
+//				st_tick_for_task.fp_systick_100ms();
+//				st_tick_for_task.bl_arrive_100ms_flag = false;
+//			}
+//			if(st_tick_for_task.bl_arrive_500ms_flag == true)
+//			{
+//				st_tick_for_task.fp_systick_500ms();
+//				st_tick_for_task.bl_arrive_500ms_flag = false;
+//			}
+//			if(st_tick_for_task.bl_arrive_1000ms_flag == true)
+//			{
+//				st_tick_for_task.fp_systick_1000ms();
+//				st_tick_for_task.bl_arrive_1000ms_flag = false;
+//			}
+//			if(st_tick_for_task.bl_arrive_5000ms_flag == true)
+//			{
+//				st_tick_for_task.fp_systick_5000ms();
+//				st_tick_for_task.bl_arrive_5000ms_flag = false;
+//			}
 			}
-			if(st_tick_for_task.bl_arrive_5ms_flag == true)
-			{
-				st_tick_for_task.fp_systick_5ms();
-				st_tick_for_task.bl_arrive_5ms_flag = false;
-			}
-			#endif
-			if(st_tick_for_task.bl_arrive_10ms_flag == true)
-			{
-				st_tick_for_task.fp_systick_10ms();
-				st_tick_for_task.bl_arrive_10ms_flag = false;
-			}
-			if(st_tick_for_task.bl_arrive_50ms_flag == true)
-			{
-				st_tick_for_task.fp_systick_50ms();
-				st_tick_for_task.bl_arrive_50ms_flag = false;
-			}
-			if(st_tick_for_task.bl_arrive_100ms_flag == true)
-			{
-				st_tick_for_task.fp_systick_100ms();
-				st_tick_for_task.bl_arrive_100ms_flag = false;
-			}
-			if(st_tick_for_task.bl_arrive_500ms_flag == true)
-			{
-				st_tick_for_task.fp_systick_500ms();
-				st_tick_for_task.bl_arrive_500ms_flag = false;
-			}
-			if(st_tick_for_task.bl_arrive_1000ms_flag == true)
-			{
-				st_tick_for_task.fp_systick_1000ms();
-				st_tick_for_task.bl_arrive_1000ms_flag = false;
-			}
-			if(st_tick_for_task.bl_arrive_5000ms_flag == true)
-			{
-				st_tick_for_task.fp_systick_5000ms();
-				st_tick_for_task.bl_arrive_5000ms_flag = false;
-			}
-			
+	
 			if(vu16_now_systick_count >= ARRIVE_5000MS)
 			{
 				vu16_now_systick_count = 1;

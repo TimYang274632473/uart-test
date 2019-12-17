@@ -3,7 +3,7 @@
 
 #define REMOTE_FRAME_TEST				 1
 
-#define CAN_FILTER_LIST_MODE		 1										//列表模式
+//#define CAN_FILTER_LIST_MODE		 1										//列表模式
 
 #define MAIN_BOARD   						 1
 #define SUB_BOARD1   						 0

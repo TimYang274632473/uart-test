@@ -74,7 +74,7 @@ u8 CAN_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 
 	//CAN单元设置
 	CAN_InitStructure.CAN_TTCM=DISABLE;			
-	CAN_InitStructure.CAN_ABOM=DISABLE;			
+	CAN_InitStructure.CAN_ABOM=ENABLE;			//开启自动离线恢复
 	CAN_InitStructure.CAN_AWUM=DISABLE;			
 	CAN_InitStructure.CAN_NART=ENABLE;			
 	CAN_InitStructure.CAN_RFLM=DISABLE;		 	
@@ -165,11 +165,11 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 		CAN_Receive(CAN1,CAN_FIFO0, &RxMessage);
 		can_rx_flag = true;	
 	}	
-	//error 重启can
+	//error 
 	if(CAN_GetITStatus(CAN1,CAN_IT_ERR) == SET)
 	{
-		CAN_ClearITPendingBit(CAN1,CAN_IT_ERR);
-		CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,8,CAN_Mode_Normal);			//250k bps
+		CAN_ClearITPendingBit(CAN1,CAN_IT_ERR);		//开启了ABOM后清除错误标志即可，自动恢复主动错误运行状态
+//		CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,8,CAN_Mode_Normal);			//250k bps
 	}	
 	
 //	//send buff empty
